@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GFE Trainer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="start" class="screen">
+  <img src="logo.png" class="logo" alt="" onerror="this.style.display='none'">
+  <h1>GFE Trainer</h1>
+  <h3>How it works</h3>
+  <p>You matched with a guy on Tinder 7 days ago and you've been texting every day. You actually like him. Tonight he texts you first. Just talk to him like a real girl who's into him.</p>
+  <ul>
+    <li>Every chat is a <b>different guy</b> with his own life, mood and story. He'll drop little hints about his life. Catch them and ask.</li>
+    <li>Send as many lines as you want in a row. He replies once you stop typing for a few seconds.</li>
+    <li><b>Tap any of his messages</b> to reply to that exact message.</li>
+    <li>No selling, no PPVs. This is pure GFE practice.</li>
+    <li>Each time he texts, you have <b>60 seconds</b> to reply.</li>
+    <li>The chat is <b>10 replies</b> long. Miss more than <b>3</b> and it's <b>FAILED</b>.</li>
+  </ul>
+  <input id="name" placeholder="Your chatter name">
+  <button id="startBtn">Start chat</button>
+  <p id="cfgWarn" class="warn" hidden>The server link isn't set yet. Open config.js on GitHub and paste it into WORKER_URL.</p>
+</div>
+
+<div id="chat" class="screen" hidden>
+  <div class="head">
+    <div class="avatar" id="avatar">J</div>
+    <div class="who"><b id="guyName">Jake</b><small>matched 7 days ago</small></div>
+    <div class="stats">
+      <span id="turnTxt">Turn 0 / 10</span>
+      <span id="timer">60s</span>
+      <button id="endBtn">End &amp; get score</button>
+    </div>
+  </div>
+  <div id="msgs"></div>
+  <div id="replyBar" hidden><span id="replyTxt"></span><button id="replyX">✕</button></div>
+  <div class="composer">
+    <input id="input" placeholder="Type a message..." autocomplete="off">
+    <button id="send">➤</button>
+  </div>
+</div>
+
+<div id="result" class="screen" hidden></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
