@@ -1,4 +1,5 @@
-const ALLOWED_ORIGIN = "https://zenospams-lang.github.io";
+const ALLOWED_ORIGIN = "https://pat.invisiblemgmt-rgb.github.io";
+const MODEL = "openai/gpt-oss-120b";
 
 const PERSONA_PROMPT = `You are roleplaying a man texting a woman he matched with on Tinder 7 days ago.
 You've texted daily and you genuinely like her. Tonight YOU text first.
@@ -58,37 +59,42 @@ export default {
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     };
+    const json = (obj, status = 200) =>
+      new Response(JSON.stringify(obj), {
+        status,
+        headers: { ...cors, "content-type": "application/json" },
+      });
+
     if (req.method === "OPTIONS") return new Response(null, { headers: cors });
-    if (req.method !== "POST") return new Response("POST only", { status: 405, headers: cors });
+    if (req.method !== "POST") return json({ error: { message: "POST only" } }, 405);
 
     try {
       const { mode, messages, persona } = await req.json();
       const isScore = mode === "score";
       const system = isScore ? SCORER_PROMPT : PERSONA_PROMPT + "\n\n" + (persona || "");
 
-      const r = await fetch("https://api.anthropic.com/v1/messages", {
+      const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
-          "x-api-key": env.ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
+          "Authorization": "Bearer " + env.GROQ_API_KEY,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: isScore ? 1200 : 400,
-          system,
-          messages,
+          model: MODEL,
+          reasoning_effort: "low",
+          max_completion_tokens: isScore ? 2000 : 1000,
+          messages: [{ role: "system", content: system }, ...messages],
         }),
       });
-      return new Response(await r.text(), {
-        status: r.status,
-        headers: { ...cors, "content-type": "application/json" },
-      });
+
+      const data = await r.json();
+      if (!r.ok) return json({ error: { message: (data.error && data.error.message) || "Groq error " + r.status } }, r.status);
+
+      const text = (data.choices && data.choices[0] && data.choices[0].message.content) || "";
+      // Convert to the format app.js already expects
+      return json({ content: [{ type: "text", text }] });
     } catch (e) {
-      return new Response(JSON.stringify({ error: { message: String(e) } }), {
-        status: 500,
-        headers: { ...cors, "content-type": "application/json" },
-      });
+      return json({ error: { message: String(e) } }, 500);
     }
   },
 };
