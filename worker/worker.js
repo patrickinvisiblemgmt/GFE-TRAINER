@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = "https://pat.invisiblemgmt-rgb.github.io";
+const ALLOWED_ORIGIN = "https://patinvisiblemgmt-rgb.github.io";
 const MODEL = "openai/gpt-oss-120b";
 
 const PERSONA_PROMPT = `You are roleplaying a man texting a woman he matched with on Tinder 7 days ago.
